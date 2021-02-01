@@ -1,30 +1,18 @@
-var ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-var ffmpeg = require("fluent-ffmpeg");
+const fs = require("fs");
+const { VideoGenerator } = require("./VideoGenerator");
 
-ffmpeg.setFfmpegPath(ffmpegPath);
+const imagesPath = "./images";
 
-console.log("Running command");
+fs.readdir(imagesPath, onRead);
 
-var command = ffmpeg("test-files/images/lion.jpg");
+function onRead(error, files) {
+  if (error) console.log("An error occurred duing read", error.message);
 
-command
-  .on("progress", onProgress)
-  .on("end", onEnd)
-  .on("error", onError)
-  .loop(3)
-  .addInput("test-files/audio/lion.m4a")
-  .videoBitrate("2048k")
-  .videoCodec("mpeg4")
-  .save("./output/test.mp4"); // output the first video file
+  const filtered = files.filter((file) => !file.startsWith(".")); // Filters out junk files
 
-function onProgress(progress) {
-  console.log("Progress:\n", progress);
-}
-
-function onEnd() {
-  console.log("Finished!");
-}
-
-function onError(error) {
-  console.log("An error occurred:", error.message);
+  filtered.forEach((file) => {
+    const splitFile = file.split(".");
+    const name = splitFile[0];
+    VideoGenerator.generate(file, name, "./audio", imagesPath);
+  });
 }

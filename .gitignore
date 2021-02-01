@@ -104,3 +104,9 @@ dist
 .tern-port
 
 .DS_Store
+
+# Temporary files
+audio
+images
+output
+temp
