@@ -1,4 +1,4 @@
-class DataModel {
+class FileModel {
   constructor(name, data, extension, duration = undefined) {
     this.name = name;
     this.data = data;
@@ -42,4 +42,4 @@ class DataModel {
   }
 }
 
-module.exports = { DataModel };
+module.exports = { FileModel };
