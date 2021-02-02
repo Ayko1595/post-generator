@@ -19,6 +19,7 @@ class VideoGenerator {
       .addInput(`${audioPath}/${imageName}.m4a`)
       .videoBitrate("2048k")
       .videoCodec("mpeg4")
+      .size("1024x1024")
       .save(
         `./output/${year}${month < 10 ? 0 : ""}${month}${day}${imageName}.mp4`
       );
