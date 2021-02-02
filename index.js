@@ -1,7 +1,9 @@
 const fs = require("fs");
+const { DataModel } = require("./models/DataModel");
 const { VideoGenerator } = require("./VideoGenerator");
 
 const imagesPath = "./images";
+const audioPath = "./audio";
 
 fs.readdir(imagesPath, onRead);
 
@@ -13,6 +15,14 @@ function onRead(error, files) {
   filtered.forEach((file) => {
     const splitFile = file.split(".");
     const name = splitFile[0];
-    VideoGenerator.generate(file, name, "./audio", imagesPath);
+
+    const imageFile = fs.readFileSync(`${imagesPath}/${name}.jpg`);
+    const audioFile = fs.readFileSync(`${audioPath}/${name}.m4a`);
+
+    const imageObject = new DataModel(name, imageFile, "jpg");
+    const audioObject = new DataModel(name, audioFile, "m4a", 3);
+
+    const videoGen = new VideoGenerator(imageObject, audioObject);
+    videoGen.generate();
   });
 }
