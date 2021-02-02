@@ -1,28 +1,41 @@
-const fs = require("fs");
-const { DataModel } = require("./models/DataModel");
-const { VideoGenerator } = require("./VideoGenerator");
+const express = require("express");
+const {
+  body,
+  validationResult,
+  check,
+  checkSchema,
+} = require("express-validator");
+const { FileModel } = require("./models/FileModel");
+const app = express();
+const port = 3000;
 
-const imagesPath = "./images";
-const audioPath = "./audio";
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-fs.readdir(imagesPath, onRead);
+app.get(
+  "/generateVideo",
+  checkSchema({
+    imageFiles: {
+      isArray: {
+        errorMessage: "imageFiles has to be an array.",
+      },
+      notEmpty: {
+        errorMessage: "imageFiles cannot be empty.",
+      },
+    },
+    ...FileModel.getSchema("imageFiles"),
+    ...FileModel.getSchema("audioFiles"),
+  }),
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-function onRead(error, files) {
-  if (error) console.log("An error occurred duing read", error.message);
+    res.send("Hello World!");
+  }
+);
 
-  const filtered = files.filter((file) => !file.startsWith(".")); // Filters out junk files
-
-  filtered.forEach((file) => {
-    const splitFile = file.split(".");
-    const name = splitFile[0];
-
-    const imageFile = fs.readFileSync(`${imagesPath}/${name}.jpg`);
-    const audioFile = fs.readFileSync(`${audioPath}/${name}.m4a`);
-
-    const imageObject = new DataModel(name, imageFile, "jpg");
-    const audioObject = new DataModel(name, audioFile, "m4a", 3);
-
-    const videoGen = new VideoGenerator(imageObject, audioObject);
-    videoGen.generate();
-  });
-}
+app.listen(port, () => {
+  console.log(`App listening at http://localhost:${port}`);
+});
