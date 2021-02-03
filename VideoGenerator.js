@@ -53,6 +53,7 @@ class VideoGenerator {
       .videoBitrate("2048k")
       .videoCodec("mpeg4")
       .size("1024x1024")
+      // TODO: Should probably divide based on current user or something
       .save(
         `./output/${year}${month < 10 ? 0 : ""}${month}${day}${imageName}.mp4`
       );

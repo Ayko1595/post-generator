@@ -8,29 +8,36 @@ const {
 const { FileModel } = require("./models/FileModel");
 const app = express();
 const port = 3000;
+const cors = require("cors");
+const multer = require("multer");
+const { VideoGenerator } = require("./VideoGenerator");
+const { FilesHelper } = require("./utils/FilesHelper");
+const upload = multer();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors());
 
-app.get(
+// TODO: Add validation
+app.post(
   "/generateVideo",
-  checkSchema({
-    imageFiles: {
-      isArray: {
-        errorMessage: "imageFiles has to be an array.",
-      },
-      notEmpty: {
-        errorMessage: "imageFiles cannot be empty.",
-      },
-    },
-    ...FileModel.getSchema("imageFiles"),
-    ...FileModel.getSchema("audioFiles"),
-  }),
+  upload.fields([{ name: "imageFiles" }, { name: "audioFiles" }]),
   (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    if (!req.files) {
+      return res.status(400).json({ errors: "TEST" });
     }
+
+    const files = req.files;
+    const fileKeys = Object.keys(files);
+    const fileObjects = FilesHelper.joinByFilenames(fileKeys, files);
+
+    Object.values(fileObjects).forEach((fileObj) => {
+      const imgObj = FileModel.initFromFileObject(fileObj["imageFiles"]);
+      const audioObj = FileModel.initFromFileObject(fileObj["audioFiles"]);
+
+      const videoGenerator = new VideoGenerator(imgObj, audioObj);
+      videoGenerator.generate();
+    });
 
     res.send("Hello World!");
   }
