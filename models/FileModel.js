@@ -6,6 +6,15 @@ class FileModel {
     this.duration = duration;
   }
 
+  static initFromFileObject(file) {
+    const splitName = file.originalname.split(".");
+    const fileName = splitName[0];
+    const fileData = file.buffer;
+    const fileExtension = splitName[1];
+    // TODO: If mimetype === audio -> get duration
+    return new FileModel(fileName, fileData, fileExtension, 3);
+  }
+
   static getSchema(objectName) {
     return {
       [`${objectName}.*.name`]: {
