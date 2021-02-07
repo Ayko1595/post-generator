@@ -44,33 +44,38 @@ class VideoGenerator {
     const month = today.getMonth() + 1;
     const day = today.getDate();
 
-    command
-      .on("progress", this.onProgress)
-      .on("end", () => this.onEnd(this.imageObject, this.audioObject))
-      .on("error", this.onError)
-      .loop(this.audioObject.duration)
-      .addInput(`./temp/${this.audioObject.name}.${this.audioObject.extension}`)
-      .videoBitrate("2048k")
-      .videoCodec("mpeg4")
-      .size("1024x1024")
-      // TODO: Should probably divide based on current user or something
-      .save(
-        `./output/${year}${month < 10 ? 0 : ""}${month}${day}${imageName}.mp4`
-      );
+    return new Promise((resolve, reject) => {
+      command
+        .on("progress", this.onProgress)
+        .on("end", () =>
+          this.onEnd(this.imageObject, this.audioObject, resolve)
+        )
+        .on("error", (err) => {
+          return reject(new Error(err));
+        })
+        .loop(this.audioObject.duration)
+        .addInput(
+          `./temp/${this.audioObject.name}.${this.audioObject.extension}`
+        )
+        .videoBitrate("2048k")
+        .videoCodec("mpeg4")
+        .size("1024x1024")
+        // TODO: Should probably divide based on current user or something
+        .save(
+          `./output/${year}${month < 10 ? 0 : ""}${month}${day}${imageName}.mp4`
+        );
+    });
   }
 
   onProgress(progress) {
     console.log("Progress:\n", progress);
   }
 
-  onEnd(imageObject, audioObject) {
+  onEnd(imageObject, audioObject, resolve) {
     console.log("Finished!");
     this.deleteFile(imageObject.name, imageObject.extension);
     this.deleteFile(audioObject.name, audioObject.extension);
-  }
-
-  onError(error) {
-    console.log("An error occurred:", error.message);
+    resolve();
   }
 
   printError(error) {
