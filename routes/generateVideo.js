@@ -12,20 +12,20 @@ const { FilesValidator } = require("../utils/FilesValidator");
 const filesValidatorMiddleW = (req, res, next) => {
   upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
-      return res.status(403).json({ errors: err });
+      return res.status(403).json({ message: err.message });
     } else if (err) {
-      return res.status(400).json({ errors: err });
+      return res.status(400).json({ message: err.message });
     }
 
     if (!req.files) {
       return res.status(400).json({
-        errors: "No files were sent.",
+        message: "No files were sent.",
       });
     }
 
     if (!(req.files[IMAGE_FILES] && req.files[AUDIO_FILES])) {
       return res.status(400).json({
-        errors:
+        message:
           "Both fields 'imageFiles' and 'audioFiles' have to be in the form.",
       });
     } else if (
@@ -35,7 +35,7 @@ const filesValidatorMiddleW = (req, res, next) => {
       )
     ) {
       return res.status(400).json({
-        errors: "Only images and audio files are allowed.",
+        message: "Only images and audio files are allowed.",
       });
     }
     next();
