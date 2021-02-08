@@ -59,7 +59,7 @@ const bodyValidatorMiddleW = (req, res, next) => {
 router.use(filesValidatorMiddleW);
 router.use(bodyValidatorMiddleW);
 
-router.post("/generateVideo", upload, async (req, res) => {
+router.post("/generateVideo", async (req, res) => {
   const files = req.files;
   const fileKeys = Object.keys(files);
   const fileObjects = FilesHelper.joinByFilenames(fileKeys, files);
