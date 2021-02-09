@@ -12,19 +12,19 @@ const { FilesValidator } = require("../utils/FilesValidator");
 const filesValidatorMiddleW = (req, res, next) => {
   upload(req, res, (err) => {
     if (err instanceof multer.MulterError) {
-      return res.status(403).json({ message: err.message });
+      return res.status(400).json({ message: err.message });
     } else if (err) {
       return res.status(400).json({ message: err.message });
     }
 
     if (!req.files) {
-      return res.status(400).json({
+      return res.status(403).json({
         message: "No files were sent.",
       });
     }
 
     if (!(req.files[IMAGE_FILES] && req.files[AUDIO_FILES])) {
-      return res.status(400).json({
+      return res.status(403).json({
         message:
           "Both fields 'imageFiles' and 'audioFiles' have to be in the form.",
       });
@@ -34,7 +34,7 @@ const filesValidatorMiddleW = (req, res, next) => {
         FilesValidator.onlyMimetype("audio", req.files[AUDIO_FILES])
       )
     ) {
-      return res.status(400).json({
+      return res.status(415).json({
         message: "Only images and audio files are allowed.",
       });
     }
@@ -42,24 +42,9 @@ const filesValidatorMiddleW = (req, res, next) => {
   });
 };
 
-const bodyValidatorMiddleW = (req, res, next) => {
-  const jsonBody = req.body;
-
-  const bodyIsEmpty =
-    jsonBody &&
-    Object.keys(jsonBody).length === 0 &&
-    jsonBody.constructor === Object;
-
-  if (bodyIsEmpty) {
-    return res.status(400).json({ errors: "Body has to be empty." });
-  }
-  next();
-};
-
 router.use(filesValidatorMiddleW);
-router.use(bodyValidatorMiddleW);
 
-router.post("/generateVideo", async (req, res) => {
+router.post("/generateVideos", async (req, res) => {
   const files = req.files;
   const fileKeys = Object.keys(files);
   const fileObjects = FilesHelper.joinByFilenames(fileKeys, files);
@@ -70,6 +55,7 @@ router.post("/generateVideo", async (req, res) => {
   await archiveHelper.startCompression();
   const readStream = await fs.createReadStream("./videos.zip");
 
+  res.setHeader("content-type", "application/zip");
   readStream.on("close", () => res.end());
   readStream.pipe(res);
 });

@@ -1,13 +1,7 @@
-const express = require("express");
-const app = express();
-const port = 3000;
-const cors = require("cors");
+const AppHelper = require("./utils/AppHelper");
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(cors());
-app.use(require("./routes/generateVideo"));
+const app = new AppHelper(3000);
 
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
+app.start(() => {
+  console.log(`App listening at http://localhost:${app.port}`);
 });
