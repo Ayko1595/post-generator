@@ -12,7 +12,10 @@ class AppHelper {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(cors());
+
+    // ROUTES
     this.app.use(require("../routes/generateVideos"));
+    this.app.use(require("../routes/auth"));
   }
 
   start(listener) {

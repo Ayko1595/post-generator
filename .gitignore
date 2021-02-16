@@ -110,3 +110,6 @@ audio
 images
 output
 temp
+
+# config
+.env
