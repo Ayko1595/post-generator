@@ -20,17 +20,22 @@ class FilesHelper {
     return fileObjects;
   }
 
+  // TODO: Move to VideoGenerator
   static async generateVideos(arr) {
     if (!arr) return false;
     if (arr.length === 0) return false;
+
+    let promises = [];
 
     for (const fileObj of arr) {
       const imgObj = FileModel.initFromFileObject(fileObj["imageFiles"]);
       const audioObj = FileModel.initFromFileObject(fileObj["audioFiles"]);
 
       const videoGenerator = new VideoGenerator(imgObj, audioObj);
-      await videoGenerator.generate();
+      promises.push(videoGenerator.generate());
     }
+
+    await Promise.all(promises);
 
     return true;
   }

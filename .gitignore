@@ -110,6 +110,7 @@ audio
 images
 output
 temp
+*.zip
 
 # config
 .env

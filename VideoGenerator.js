@@ -8,6 +8,8 @@ class VideoGenerator {
   constructor(imageObject, audioObject) {
     this.imageObject = imageObject;
     this.audioObject = audioObject;
+    console.log(imageObject);
+    console.log(audioObject);
     this.saveDataToFile(
       imageObject.data,
       imageObject.name,
@@ -20,6 +22,7 @@ class VideoGenerator {
     );
   }
 
+  // TODO: Move to FilesHelper
   saveDataToFile(data, name, extension) {
     try {
       fs.writeFileSync(`./temp/${name}.${extension}`, data);
@@ -28,6 +31,7 @@ class VideoGenerator {
     }
   }
 
+  // TODO: Move to FilesHelper
   deleteFile(name, extension) {
     try {
       fs.unlinkSync(`./temp/${name}.${extension}`);
@@ -60,7 +64,6 @@ class VideoGenerator {
         .videoBitrate("2048k")
         .videoCodec("mpeg4")
         .size("1024x1024")
-        // TODO: Should probably divide based on current user or something
         .save(
           `./output/${year}${month < 10 ? 0 : ""}${month}${day}${imageName}.mp4`
         );
