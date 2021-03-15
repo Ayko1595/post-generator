@@ -1,52 +1,55 @@
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
-const fs = require("fs");
+const path = require("path");
+
+const { FilesHelper } = require("./utils/FilesHelper");
+const { FileModel } = require("./models/FileModel");
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 class VideoGenerator {
   constructor(imageObject, audioObject) {
+    this.timeLabel = `Generate (${imageObject.originalname}) and (${audioObject.originalname})`;
     this.imageObject = imageObject;
     this.audioObject = audioObject;
-    console.log(imageObject);
-    console.log(audioObject);
-    this.saveDataToFile(
-      imageObject.data,
-      imageObject.name,
-      imageObject.extension
+
+    FilesHelper.saveDataToFile(
+      this.imageObject.data,
+      path.join("./temp", this.imageObject.originalname)
     );
-    this.saveDataToFile(
-      audioObject.data,
-      audioObject.name,
-      audioObject.extension
+    FilesHelper.saveDataToFile(
+      this.audioObject.data,
+      path.join("./temp", this.audioObject.originalname)
     );
   }
 
-  // TODO: Move to FilesHelper
-  saveDataToFile(data, name, extension) {
-    try {
-      fs.writeFileSync(`./temp/${name}.${extension}`, data);
-    } catch (error) {
-      this.printError(error);
-    }
-  }
+  static async generateVideos(arr) {
+    if (!arr) return false;
+    if (arr.length === 0) return false;
 
-  // TODO: Move to FilesHelper
-  deleteFile(name, extension) {
-    try {
-      fs.unlinkSync(`./temp/${name}.${extension}`);
-    } catch (error) {
-      this.printError(error);
+    let promises = [];
+
+    for (const fileObj of arr) {
+      const imgObj = FileModel.initFromFileObject(fileObj["imageFiles"]);
+      const audioObj = FileModel.initFromFileObject(fileObj["audioFiles"]);
+
+      const videoGenerator = new VideoGenerator(imgObj, audioObj);
+      promises.push(videoGenerator.generate());
     }
+
+    await Promise.all(promises);
+
+    return true;
   }
 
   generate() {
     const imageName = this.imageObject.name;
-    const command = ffmpeg(`./temp/${imageName}.${this.imageObject.extension}`);
+    const command = ffmpeg(`./temp/${this.imageObject.originalname}`);
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
+    console.time(this.timeLabel);
 
     return new Promise((resolve, reject) => {
       command
@@ -58,9 +61,7 @@ class VideoGenerator {
           return reject(new Error(err));
         })
         .loop(this.audioObject.duration)
-        .addInput(
-          `./temp/${this.audioObject.name}.${this.audioObject.extension}`
-        )
+        .addInput(`./temp/${this.audioObject.originalname}`)
         .videoBitrate("2048k")
         .videoCodec("mpeg4")
         .size("1024x1024")
@@ -75,14 +76,10 @@ class VideoGenerator {
   }
 
   onEnd(imageObject, audioObject, resolve) {
-    console.log("Finished!");
-    this.deleteFile(imageObject.name, imageObject.extension);
-    this.deleteFile(audioObject.name, audioObject.extension);
+    console.timeEnd(this.timeLabel);
+    FilesHelper.deleteFile(path.join(`./temp`, imageObject.originalname));
+    FilesHelper.deleteFile(path.join(`./temp`, audioObject.originalname));
     resolve();
-  }
-
-  printError(error) {
-    console.log("An error occurred:\n", error.message);
   }
 }
 

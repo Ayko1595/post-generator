@@ -11,6 +11,7 @@ const upload = multer().fields([{ name: IMAGE_FILES }, { name: AUDIO_FILES }]);
 const fs = require("fs");
 const { FilesValidator } = require("../utils/FilesValidator");
 const config = require("../config");
+const { VideoGenerator } = require("../VideoGenerator");
 
 const filesValidatorMiddleW = (req, res, next) => {
   upload(req, res, (err) => {
@@ -71,7 +72,7 @@ router.post(
     const fileKeys = Object.keys(files);
     const fileObjects = FilesHelper.joinByFilenames(fileKeys, files);
 
-    await FilesHelper.generateVideos(Object.values(fileObjects));
+    await VideoGenerator.generateVideos(Object.values(fileObjects));
 
     const archiveHelper = new ArchiveHelper();
     await archiveHelper.startCompression();

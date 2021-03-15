@@ -1,5 +1,6 @@
 const fs = require("fs");
 const archiver = require("archiver");
+const { FilesHelper } = require("../utils/FilesHelper");
 
 class ArchiveHelper {
   constructor() {
@@ -10,7 +11,7 @@ class ArchiveHelper {
     this.output = fs.createWriteStream("videos.zip");
 
     this.output.on("close", function () {
-      console.log("ArchiverHelper finalized.");
+      FilesHelper.clearFolder(`./output`);
     });
 
     this.output.on("end", function () {

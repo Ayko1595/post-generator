@@ -1,5 +1,7 @@
+const fs = require("fs");
+const path = require("path");
+
 const { FileModel } = require("../models/FileModel");
-const { VideoGenerator } = require("../VideoGenerator");
 
 class FilesHelper {
   // Creates an object inner joining form data fields based on same file names (excludes extension)
@@ -20,24 +22,34 @@ class FilesHelper {
     return fileObjects;
   }
 
-  // TODO: Move to VideoGenerator
-  static async generateVideos(arr) {
-    if (!arr) return false;
-    if (arr.length === 0) return false;
-
-    let promises = [];
-
-    for (const fileObj of arr) {
-      const imgObj = FileModel.initFromFileObject(fileObj["imageFiles"]);
-      const audioObj = FileModel.initFromFileObject(fileObj["audioFiles"]);
-
-      const videoGenerator = new VideoGenerator(imgObj, audioObj);
-      promises.push(videoGenerator.generate());
+  static saveDataToFile(data, directory) {
+    try {
+      fs.writeFileSync(directory, data);
+    } catch (error) {
+      console.log("An error occurred:\n", error.message);
     }
+  }
 
-    await Promise.all(promises);
+  static deleteFile(directory) {
+    try {
+      fs.unlinkSync(directory);
+    } catch (error) {
+      console.log("An error occurred:\n", error.message);
+    }
+  }
 
-    return true;
+  static clearFolder(directory) {
+    try {
+      fs.readdir(directory, (err, files) => {
+        if (err) throw err;
+
+        for (const file of files) {
+          FilesHelper.deleteFile(path.join(directory, file));
+        }
+      });
+    } catch (error) {
+      console.log("An error occurred:\n", error.message);
+    }
   }
 }
 
