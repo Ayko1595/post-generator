@@ -65,7 +65,7 @@ const authenticateToken = (req, res, next) => {
 
 router.post(
   "/generateVideos",
-  authenticateToken,
+  // authenticateToken,
   filesValidatorMiddleW,
   async (req, res) => {
     const files = req.files;
