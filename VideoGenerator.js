@@ -59,12 +59,12 @@ class VideoGenerator {
     const month = today.getMonth() + 1;
     const day = today.getDate();
 
-    this.bar.start(7500, 0);
+    // this.bar.start(7500, 0);
 
     return new Promise((resolve, reject) => {
       command
         .on("progress", (progress) => {
-          this.bar.update(progress.percent);
+          // this.bar.update(progress.percent);
         })
         .on("end", () =>
           this.onEnd(this.imageObject, this.audioObject, resolve)

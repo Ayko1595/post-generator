@@ -33,18 +33,18 @@ afterEach((done) => {
   return server && server.close(done);
 });
 
-describe("POST /auth", () => {
-  it("should get a 200 and a token when the correct credentials are sent", (done) => {
-    agent
-      .post("/auth")
-      .set("Authorization", config["clientId"])
-      .end((_, res) => {
-        expect(res.statusCode).toEqual(200);
-        expect(res.header["Authorization"]).not.toBeNull();
-        done();
-      });
-  });
-});
+// describe("POST /auth", () => {
+//   it("should get a 200 and a token when the correct credentials are sent", (done) => {
+//     agent
+//       .post("/auth")
+//       .set("Authorization", config["clientId"])
+//       .end((_, res) => {
+//         expect(res.statusCode).toEqual(200);
+//         expect(res.header["Authorization"]).not.toBeNull();
+//         done();
+//       });
+//   });
+// });
 
 describe("POST /generateVideos", () => {
   it("should get a 200 when form data contains correct fields and files", (done) => {
@@ -62,18 +62,18 @@ describe("POST /generateVideos", () => {
       });
   });
 
-  it("should get a 401 when form data contains correct fields and files but no token is sent", (done) => {
-    agent
-      .post("/generateVideos")
-      .field("images", JSON.stringify({}))
-      .attach("imageFiles", testImage)
-      .field("audio", JSON.stringify({}))
-      .attach("audioFiles", testAudio)
-      .end((_, res) => {
-        expect(res.statusCode).toEqual(401);
-        done();
-      });
-  });
+  // it("should get a 401 when form data contains correct fields and files but no token is sent", (done) => {
+  //   agent
+  //     .post("/generateVideos")
+  //     .field("images", JSON.stringify({}))
+  //     .attach("imageFiles", testImage)
+  //     .field("audio", JSON.stringify({}))
+  //     .attach("audioFiles", testAudio)
+  //     .end((_, res) => {
+  //       expect(res.statusCode).toEqual(401);
+  //       done();
+  //     });
+  // });
 
   it("should get a 403 when body is NOT empty.", (done) => {
     agent
