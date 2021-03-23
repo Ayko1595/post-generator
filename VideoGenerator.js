@@ -65,7 +65,11 @@ class VideoGenerator {
       command
         .on("progress", (progress) => {
           // this.bar.update(progress.percent);
-          console.log(`Current percentage: ${progress.percent / 100}%`);
+          console.log(
+            `Current percentage: ${
+              progress.percent ? progress.percent / 100 : 0
+            }%`
+          );
         })
         .on("end", () =>
           this.onEnd(this.imageObject, this.audioObject, resolve)

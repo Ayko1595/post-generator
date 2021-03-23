@@ -1,13 +1,11 @@
 require("dotenv").config();
+const { JsonWebTokenError } = require("jsonwebtoken");
 const request = require("supertest");
-const jwt = require("jsonwebtoken");
 
-const config = require("../config");
 const AppHelper = require("../utils/AppHelper");
 const app = new AppHelper(8080);
 
 let server, agent;
-let token;
 
 const testImage = __dirname + "/test-files/airport.jpg";
 const testAudio = __dirname + "/test-files/airport.m4a";
