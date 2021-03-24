@@ -1,7 +1,6 @@
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
 const path = require("path");
-const cliProgress = require("cli-progress");
 
 const { FilesHelper } = require("./utils/FilesHelper");
 const { FileModel } = require("./models/FileModel");
@@ -21,14 +20,6 @@ class VideoGenerator {
     FilesHelper.saveDataToFile(
       this.audioObject.data,
       path.join("./temp", this.audioObject.originalname)
-    );
-
-    this.bar = new cliProgress.SingleBar(
-      {
-        stopOnComplete: true,
-        format: `${this.timeLabel} {bar} {percentage}% | ETA: {eta_formatted} | DUR: {duration_formatted}`,
-      },
-      cliProgress.Presets.shades_classic
     );
   }
 
@@ -59,15 +50,13 @@ class VideoGenerator {
     const month = today.getMonth() + 1;
     const day = today.getDate();
 
-    // this.bar.start(7500, 0);
-
+    console.time(this.timeLabel);
     return new Promise((resolve, reject) => {
       command
         .on("progress", (progress) => {
-          // this.bar.update(progress.percent);
           console.log(
             `Current percentage: ${
-              progress.percent ? progress.percent / 100 : 0
+              progress.frames ? (progress.frames / 75) * 100 : 0
             }%`
           );
         })
@@ -89,6 +78,7 @@ class VideoGenerator {
   }
 
   onEnd(imageObject, audioObject, resolve) {
+    console.timeEnd(this.timeLabel);
     FilesHelper.deleteFile(path.join(`./temp`, imageObject.originalname));
     FilesHelper.deleteFile(path.join(`./temp`, audioObject.originalname));
     resolve();
