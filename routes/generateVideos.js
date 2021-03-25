@@ -63,8 +63,14 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+const allowOrigin = (req, res, next) => {
+   res.setHeader("Access-Control-Allow-Origin", "*");
+   next();
+}
+
 router.post(
   "/generateVideos",
+  allowOrigin,
   // authenticateToken,
   filesValidatorMiddleW,
   async (req, res) => {
