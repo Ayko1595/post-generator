@@ -25,7 +25,6 @@ class FilesHelper {
 	static folderExists(directory) {
 		const directoryName = directory.split("/")[0];
 		if (fs.existsSync(directoryName)) {
-			console.log("Dir exists: ", directoryName);
 			return true;
 		}
 		return false;
