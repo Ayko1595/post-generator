@@ -6,5 +6,5 @@ const AppHelper = require("./utils/AppHelper");
 const app = new AppHelper(config.port);
 
 app.start(() => {
-  console.log(`App listening at http://localhost:${config.port}`);
+	console.log(`App listening at http://localhost:${config.port}`);
 });

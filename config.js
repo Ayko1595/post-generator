@@ -5,12 +5,12 @@ const audience = process.env.AUDIENCE;
 const serverPort = process.env.PORT || 3000;
 
 module.exports = {
-  claims: {
-    expiresIn: "1h",
-    issuer: issuer,
-    audience: audience,
-  },
-  secret: jwtSecret,
-  clientId: clientId,
-  port: serverPort,
+	claims: {
+		expiresIn: "1h",
+		issuer: issuer,
+		audience: audience,
+	},
+	secret: jwtSecret,
+	clientId: clientId,
+	port: serverPort,
 };
