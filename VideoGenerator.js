@@ -50,7 +50,7 @@ class VideoGenerator {
 		const month = today.getMonth() + 1;
 		const day = today.getDate();
 
-		FilesHelper.createDir("output");
+		if (!FilesHelper.folderExists("output")) FilesHelper.folderDir("output");
 
 		console.time(this.timeLabel);
 		return new Promise((resolve, reject) => {

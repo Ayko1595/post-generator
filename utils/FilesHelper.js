@@ -22,7 +22,7 @@ class FilesHelper {
 		return fileObjects;
 	}
 
-	static dirExists(directory) {
+	static folderExists(directory) {
 		const directoryName = directory.split("/")[0];
 		if (fs.existsSync(directoryName)) {
 			console.log("Dir exists: ", directoryName);
@@ -31,15 +31,18 @@ class FilesHelper {
 		return false;
 	}
 
-	static createDir(directory) {
-		console.log("Create dir: ", directory);
+	static createFolder(directory) {
 		const directoryName = directory.split("/")[0];
-		fs.mkdirSync(directoryName);
+		try {
+			fs.mkdirSync(directoryName);
+		} catch (error) {
+			console.log("An error occurred:\n", error.message);
+		}
 	}
 
 	static saveDataToFile(data, directory) {
 		try {
-			if (!FilesHelper.dirExists(directory)) {
+			if (!FilesHelper.folderExists(directory)) {
 				FilesHelper.createDir(directory);
 			}
 			fs.writeFileSync(directory, data);
@@ -68,6 +71,20 @@ class FilesHelper {
 		} catch (error) {
 			console.log("An error occurred:\n", error.message);
 		}
+	}
+
+	static getAllFilesInFolder(directory) {
+		const filesArr = [];
+		try {
+			fs.readdirSync(directory).forEach((file) => {
+				filesArr.push(`${directory}/${file}`);
+			});
+		} catch (error) {
+			console.log("An error occurred:\n", error.message);
+		}
+
+		console.log(filesArr);
+		return filesArr;
 	}
 }
 
