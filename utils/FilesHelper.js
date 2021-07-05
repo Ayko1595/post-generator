@@ -43,7 +43,7 @@ class FilesHelper {
 	static saveDataToFile(data, directory) {
 		try {
 			if (!FilesHelper.folderExists(directory)) {
-				FilesHelper.createDir(directory);
+				FilesHelper.createFolder(directory);
 			}
 			fs.writeFileSync(directory, data);
 		} catch (error) {
