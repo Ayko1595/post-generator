@@ -15,7 +15,8 @@ class VideoGenerator {
 
 		FilesHelper.saveDataToFile(
 			this.imageObject.data,
-			path.join("./temp", this.imageObject.originalname)
+			path.join("./temp", this.imageObject.originalname),
+			true
 		);
 		FilesHelper.saveDataToFile(
 			this.audioObject.data,
@@ -57,9 +58,9 @@ class VideoGenerator {
 			command
 				.on("progress", (progress) => {
 					console.log(
-						`Current percentage: ${
+						`Current percentage: ${Math.round(
 							progress.frames ? (progress.frames / 75) * 100 : 0
-						}%`
+						)}%`
 					);
 				})
 				.on("end", () =>
@@ -70,7 +71,7 @@ class VideoGenerator {
 				})
 				.loop(this.audioObject.duration)
 				.addInput(`./temp/${this.audioObject.originalname}`)
-				.videoBitrate("2048k")
+				.videoBitrate("512k")
 				.videoCodec("mpeg4")
 				.size("1024x1024")
 				.save(

@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const sharp = require("sharp");
 
 const { FileModel } = require("../models/FileModel");
 
@@ -39,12 +40,22 @@ class FilesHelper {
 		}
 	}
 
-	static saveDataToFile(data, directory) {
+	static saveDataToFile(data, directory, isImage = false) {
 		try {
 			if (!FilesHelper.folderExists(directory)) {
 				FilesHelper.createFolder(directory);
 			}
 			fs.writeFileSync(directory, data);
+
+			// Resize images
+			if (isImage) {
+				sharp(directory)
+					.resize(1024, 1024)
+					.toBuffer((err, buffer) => {
+						if (err) throw error;
+						fs.writeFileSync(directory, buffer);
+					});
+			}
 		} catch (error) {
 			console.log("An error occurred:\n", error.message);
 		}
