@@ -50,7 +50,7 @@ class FilesHelper {
 			// Resize images
 			if (isImage) {
 				sharp(directory)
-					.resize(1024, 1024)
+					.resize(512, 512)
 					.toBuffer((err, buffer) => {
 						if (err) throw error;
 						fs.writeFileSync(directory, buffer);
