@@ -15,6 +15,7 @@ router.post("/auth", (req, res) => {
 		});
 
 		res.setHeader("Authorization", accessToken);
+		res.setHeader("Access-Control-Expose-Headers", "*, Authorization");
 
 		res.json({
 			message: "Token created.",

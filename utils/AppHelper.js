@@ -15,7 +15,7 @@ class AppHelper {
 
 		// ROUTES
 		this.app.use(require("../routes/generateVideos"));
-		// this.app.use(require("../routes/auth"));
+		this.app.use(require("../routes/auth"));
 	}
 
 	start(listener) {

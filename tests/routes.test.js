@@ -1,9 +1,7 @@
 require("dotenv").config();
-const { JsonWebTokenError } = require("jsonwebtoken");
 const request = require("supertest");
 
 const AppHelper = require("../utils/AppHelper");
-const { FilesHelper } = require("../utils/FilesHelper");
 const app = new AppHelper(8080);
 
 let server, agent;

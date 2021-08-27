@@ -71,7 +71,7 @@ const allowOrigin = (req, res, next) => {
 router.post(
 	"/generateVideos",
 	allowOrigin,
-	// authenticateToken,
+	authenticateToken,
 	filesValidatorMiddleW,
 	async (req, res) => {
 		const files = req.files;

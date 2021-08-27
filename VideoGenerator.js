@@ -73,7 +73,7 @@ class VideoGenerator {
 				.addInput(`./temp/${this.audioObject.originalname}`)
 				.videoBitrate("512k")
 				.videoCodec("mpeg4")
-				.size("512x512")
+				.size("1024x1024")
 				.save(
 					`./output/${year}${month < 10 ? 0 : ""}${month}${day}${imageName}.mp4`
 				);
